@@ -1,0 +1,27 @@
+<script lang="ts">
+  import { getPlaylistItems } from "../services/playlist";
+  import Loading from "./Loading.svelte";
+  let isLoading = true;
+  export let playlistId: string;
+  let tracks = [];
+  getPlaylistItems(playlistId).then((data) => {
+    console.log(data.data);
+    for (let i = 0; i < data.data.items.length; ++i) {
+      tracks.push(data.data.items[i]);
+    }
+    isLoading = false;
+  });
+</script>
+
+<section>
+  {#if isLoading}
+    <Loading height={30} />
+  {:else}
+    {#each tracks as track, i}
+      <h5>{track.track.name}</h5>
+    {/each}
+  {/if}
+</section>
+
+<style>
+</style>

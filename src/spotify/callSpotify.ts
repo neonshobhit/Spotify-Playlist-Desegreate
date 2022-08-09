@@ -25,7 +25,12 @@ export const callSpotify = async (req: APIRequest): Promise<APIResponse> => {
         await updateAccessToken(refreshToken, undefined);
         let APIResp =
                 await APICall(req)
-                    .then(async r => await r.json())
+                    .then(async r => {
+                      if (r.status === 401) {
+                        localStorage.clear()
+                      }
+                      return await r.json()
+                    })
         return {
           data: APIResp,
           error: undefined,
