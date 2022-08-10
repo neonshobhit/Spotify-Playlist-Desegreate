@@ -1,18 +1,27 @@
 <script lang="ts">
-    export let isExpanded:Boolean = false;
-    export let header:string;
+  export let isExpanded: Boolean = false;
+  export let header: string;
 </script>
 
 <section>
+  <div>
     <h1>{header}</h1>
-    {#if isExpanded}
-        <slot></slot>
-    {/if}
+  </div>
+  {#if isExpanded}
+    <slot />
+  {/if}
 </section>
 
 <style>
-    h1 {
-        font-size: 2rem;
-    }
-
+  div {
+    display: flex;
+    margin-left: 1.5rem;
+    background-color: rgb(0, 0, 0);
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-size: 1.5rem;
+    color: white;
+    margin-left: 1.5rem;
+  }
 </style>

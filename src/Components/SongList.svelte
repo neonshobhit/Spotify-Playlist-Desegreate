@@ -18,10 +18,25 @@
     <Loading height={30} />
   {:else}
     {#each tracks as track, i}
-      <h5>{track.track.name}</h5>
+      <div><h5>{track.track.name}</h5></div>
     {/each}
   {/if}
 </section>
 
 <style>
+  div {
+    display: flex;
+    margin-left: 2rem;
+  }
+  h5 {
+    margin: 0.5rem;
+    margin-left: 1.5rem;
+  }
+  /* section {
+    display: flex;
+    justify-content: left;
+    align-items: flex-start;
+    flex-direction: column;
+    align-content: flex-start;
+  } */
 </style>

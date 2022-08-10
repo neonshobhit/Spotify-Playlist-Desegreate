@@ -11,8 +11,7 @@ export const getSavedSongs = async (): Promise<APIResponse> => {
   return await callSpotify(request);
 };
 
-export const getPlaylists = async (): Promise<APIResponse> => {
-  let user: User = JSON.parse(localStorage.getItem("user"));
+export const getPlaylists = async (user: User): Promise<APIResponse> => {
   let request: APIRequest = {
     method: "GET",
     endpoint: `/users/${user.id}/playlists`,

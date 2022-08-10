@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as Store from "./services/store";
 	import Login from './Login.svelte'
 	import Router from 'svelte-spa-router'
 	import Home from './Home.svelte'
