@@ -1,19 +1,21 @@
 <script lang="ts">
-	import * as Store from "./services/store";
-	import Login from './Login.svelte'
-	import Router from 'svelte-spa-router'
-	import Home from './Home.svelte'
+  import * as Store from "./services/store";
+  import Login from "./Login.svelte";
+  import Router from "svelte-spa-router";
+  import Home from "./Home.svelte";
+  import Genre from "./Routes/Genre.svelte";
 
-	const routes = {
-		// Exact path
+  const routes = {
+    // Exact path
 
-		// Using named parameters, with last being optional
-		'/': Home,
-		'/login': Login,
-	}
-	const onClickRedirection = () => {
-		window.location.replace("/#/login")
-	}
+    // Using named parameters, with last being optional
+    "/": Home,
+    "/login": Login,
+    "/genre": Genre,
+  };
+  const onClickRedirection = () => {
+    window.location.replace("/#/login");
+  };
 </script>
 
 <!-- <Route path="/">
@@ -26,30 +28,30 @@
 	<Login/>
 </Route> -->
 <main>
-	<Router {routes}/>
+  <Router {routes} />
 </main>
+
 <style>
-	:global(body) {
-		padding: 0 0 0 0;
-	}
-	main {
-		text-align: center;
-		padding: 0;
-		max-width: 240px;
-		margin: 0 auto;
-	}
+  :global(body) {
+    padding: 0 0 0 0;
+  }
+  main {
+    text-align: center;
+    padding: 0;
+    max-width: 240px;
+    margin: 0 auto;
+  }
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
+  h1 {
+    color: #ff3e00;
+    text-transform: uppercase;
+    font-size: 4em;
+    font-weight: 100;
+  }
 
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
+  @media (min-width: 640px) {
+    main {
+      max-width: none;
+    }
+  }
 </style>
-

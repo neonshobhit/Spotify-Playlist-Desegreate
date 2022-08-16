@@ -1,16 +1,25 @@
 <script lang="ts">
-  import { getPlaylistItems } from "../services/playlist";
+  import { getPlaylistItems, getSavedSongs } from "../services/playlist";
   import Loading from "./Loading.svelte";
   let isLoading = true;
   export let playlistId: string;
   let tracks = [];
-  getPlaylistItems(playlistId).then((data) => {
-    console.log(data.data);
-    for (let i = 0; i < data.data.items.length; ++i) {
-      tracks.push(data.data.items[i]);
-    }
-    isLoading = false;
-  });
+  if (playlistId === "") {
+    getSavedSongs().then((savedSongs) => {
+      for (let i = 0; i < savedSongs.data.items.length; ++i) {
+        tracks.push(savedSongs.data.items[i]);
+      }
+      isLoading = false;
+    });
+  } else {
+    getPlaylistItems(playlistId).then((data) => {
+      console.log(data.data);
+      for (let i = 0; i < data.data.items.length; ++i) {
+        tracks.push(data.data.items[i]);
+      }
+      isLoading = false;
+    });
+  }
 </script>
 
 <section>
@@ -32,6 +41,14 @@
     margin: 0.5rem;
     margin-left: 1.5rem;
   }
+  /* section {
+    border: 100px;
+    border-color: black;
+    margin-top: 0;
+    background-color: aqua;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+  } */
   /* section {
     display: flex;
     justify-content: left;

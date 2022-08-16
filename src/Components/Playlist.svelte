@@ -4,38 +4,148 @@
 
   import ExpandedTile from "./ExpandedTile.svelte";
   import SongList from "./SongList.svelte";
+  import { getPlaylistItems, getSavedSongs } from "../services/playlist";
+  import { getTrackInfo } from "../services/track";
+  import { getArtist } from "../services/artist";
+import Genre from "../Routes/Genre.svelte";
 
   export let showPlaylist: boolean = false;
   export let playlists: Playlist[] = [];
-  let expanded = {};
+  let completeList: Playlist[] = [{ id: "", name: "Saved Songs" }];
+  let expanded: Map<string, boolean> = new Map();
+  let selected = {};
   Store.playlist.subscribe((playlist: Playlist[]) => {
     if (playlist.length === 0) return;
-    playlists = playlist;
+    expanded[0] = false;
+    selected[0] = false;
     for (let i = 0; i < playlist?.length; ++i) {
-      expanded[i] = false;
+      expanded[i + 1] = false;
+      playlists.push(playlist[i]);
+      completeList.push(playlist[i]);
     }
     showPlaylist = true;
   });
-  const toggleExpansion = (x: number) => {
-    for (let key in expanded) {
-      if (x === +key) {
-        expanded[key] = !expanded[key];
+
+  let songsTypeLoaded = false;
+  const genres = {}
+  const loadSongsType = async () => {
+    let tracks = {};
+    console.log("allsongs");
+    let artistSongs = {};
+    for (let key in selected) {
+      if (!selected[key]) continue;
+      let playlistId = completeList[key].id;
+      let songs;
+      let foundTracks = {}
+      if (playlistId === "") {
+        songs = await getSavedSongs().then(
+          (savedSongs) => savedSongs.data.items
+        );
+        // await getSavedSongs().then((savedSongs) => {
+        //   for (let i = 0; i < savedSongs.data.items.length; ++i) {
+        //     let id = savedSongs.data.items[i].track.id
+        //     let name = savedSongs.data.items[i].track.name
+        //     tracks[id] = name
+        //     console.log(savedSongs.data.items[i].track)
+        //     for (let j=0; j<savedSongs.data.items[i].track)
+        //     artistSongs[]
+        //   }
+        // });
       } else {
-        expanded[key] = false;
+        songs = await getPlaylistItems(playlistId).then(
+          (data) => data.data.items
+        );
+        // await getPlaylistItems(playlistId).then((data) => {
+        //   for (let i = 0; i < data.data.items.length; ++i) {
+        //     let id = data.data.items[i].track.id
+        //     let name = data.data.items[i].track.name
+        //     tracks[id] = name
+        //   }
+        // });
+      }
+      for (let i = 0; i < songs.length; ++i) {
+        let trackId = songs[i].track.id;
+        let trackName = songs[i].track.name;
+        for (let j = 0; j < songs[i].track.artists.length; ++j) {
+          if (artistSongs[songs[i].track.artists[j].id]) {
+            if (!foundTracks[trackId])
+              artistSongs[songs[i].track.artists[j].id].push({
+                trackId,
+                trackName,
+              });
+              foundTracks[trackId] = true
+          } else {
+            artistSongs[songs[i].track.artists[j].id] = [
+              { trackId, trackName },
+            ];
+          }
+        }
       }
     }
+    console.log(tracks);
+
+    // let trackId = '3APdIdF8H0jsxSuGOqXedS'
+    // let artists = {}
+
+    // for (let trackId in tracks) {
+    //   await getTrackInfo(trackId).then(track => {
+    //     let arrLen = track.data.artists.length
+    //     for (let i=0; i<arrLen; ++i) {
+    //       let artist = track.data.artists[i]
+    //       artists[artist.id] = artist.name
+    //     }
+    //   })
+
+    // }
+    
+    for (let id in artistSongs) {
+      await getArtist(id).then((artist) => {
+        console.log(artist.data);
+        for (let i = 0; i < artist.data.genres.length; ++i) {
+          if (genres[artist.data.genres[i]]) {
+            genres[artist.data.genres[i]].push(...artistSongs[id]);
+          } else {
+            genres[artist.data.genres[i]] = artistSongs[id];
+          }
+        }
+      });
+    }
+    
+    // Store.DB.genre = {...genres}
+    // Store.DB.set(genres)
+    localStorage.setItem('genre', JSON.stringify(genres))
+    console.log(genres);
+    window.location.replace('/#/genre')
+    songsTypeLoaded = true;
   };
 </script>
 
 <section>
   {#if showPlaylist}
+    <ExpandedTile header={"Saved Songs"} bind:expanded bind:selected index={0}>
+      <SongList playlistId={""} />
+    </ExpandedTile>
     {#each playlists as playlist, i}
-      <div on:click={() => toggleExpansion(i)}>
-        <ExpandedTile header={playlist.name} isExpanded={expanded[i]}>
-          <SongList playlistId={playlist.id} />
-        </ExpandedTile>
-      </div>
+      <ExpandedTile
+        header={playlist.name}
+        bind:expanded
+        bind:selected
+        index={i + 1}
+      >
+        <SongList playlistId={playlist.id} />
+      </ExpandedTile>
     {/each}
+
+    {#if playlists.length}
+      <button on:click={loadSongsType}>Load Songs Type!</button>
+    {/if}
+    {#if songsTypeLoaded}
+      <Genre/>
+      <!-- {#each Object.entries(genres) as [genre, songs]}
+        <h1>{genre}</h1>
+        <h5>{JSON.stringify(songs)}</h5>
+      {/each} -->
+    {/if}
   {/if}
 </section>
 
