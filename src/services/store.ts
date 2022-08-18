@@ -6,3 +6,5 @@ export const user: Writable<User|undefined> = writable(undefined)
 export const playlist: Writable<Playlist[]> = writable([])
 
 export const DB = writable()
+
+export const fetchedSongsOfPlaylist = {}

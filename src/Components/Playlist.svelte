@@ -4,7 +4,7 @@
 
   import ExpandedTile from "./ExpandedTile.svelte";
   import SongList from "./SongList.svelte";
-  import { getPlaylistItems, getSavedSongs } from "../services/playlist";
+  import { getPlaylistItems, getSavedSongs, fetchAllSongsOfPlaylist } from "../services/playlist";
   import { getTrackInfo } from "../services/track";
   import { getArtist } from "../services/artist";
 import Genre from "../Routes/Genre.svelte";
@@ -37,10 +37,10 @@ import Genre from "../Routes/Genre.svelte";
       let playlistId = completeList[key].id;
       let songs;
       let foundTracks = {}
-      if (playlistId === "") {
-        songs = await getSavedSongs().then(
-          (savedSongs) => savedSongs.data.items
-        );
+      // if (playlistId === "") {
+      //   songs = await getSavedSongs().then(
+      //     (savedSongs) => savedSongs.data.items
+      //   );
         // await getSavedSongs().then((savedSongs) => {
         //   for (let i = 0; i < savedSongs.data.items.length; ++i) {
         //     let id = savedSongs.data.items[i].track.id
@@ -51,8 +51,8 @@ import Genre from "../Routes/Genre.svelte";
         //     artistSongs[]
         //   }
         // });
-      } else {
-        songs = await getPlaylistItems(playlistId).then(
+      // } else {
+        songs = await fetchAllSongsOfPlaylist(playlistId).then(
           (data) => data.data.items
         );
         // await getPlaylistItems(playlistId).then((data) => {
@@ -62,7 +62,7 @@ import Genre from "../Routes/Genre.svelte";
         //     tracks[id] = name
         //   }
         // });
-      }
+      // }
       for (let i = 0; i < songs.length; ++i) {
         let trackId = songs[i].track.id;
         let trackName = songs[i].track.name;
